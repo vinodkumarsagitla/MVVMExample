@@ -5,7 +5,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
@@ -23,8 +22,7 @@ class ConnectivityChecker(
     val connectedStatus: LiveData<Boolean>
         get() = _connectedStatus.distinctUntilChanged()
 
-    private val connectivityCallback = @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    object : ConnectivityManager.NetworkCallback() {
+    private val connectivityCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             println("Network is available")
             _connectedStatus.postValue(true)
@@ -36,7 +34,6 @@ class ConnectivityChecker(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun stopMonitoringConnectivity() {
         if (monitoringConnectivity) {
@@ -45,7 +42,6 @@ class ConnectivityChecker(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun startMonitoringConnectivity() {
         _connectedStatus.postValue(isNetworkConnected())
@@ -66,7 +62,6 @@ class ConnectivityChecker(
     /**
      * Checks if the active network is connected to Internet
      */
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun isNetworkConnected(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.run {
